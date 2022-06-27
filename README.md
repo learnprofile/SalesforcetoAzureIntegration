@@ -217,7 +217,7 @@ return Task.FromResult(true);
 > Also one of the tool which folks can use as their starting playground to make use of all REST API calls from Salesforce is
 workbench.developerforce.com 
 
-> Meanwhile you need to relevant changes in localhost.settings.json file as well, please add below key / value pairs.
+> Meanwhile you need to add relevant changes in your AzureFunctionApp's localhost.settings.json file as well, please add below key / value pairs.
 
 ```
 {
