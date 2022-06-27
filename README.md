@@ -8,8 +8,9 @@
 
 > In this article will guide you through the process of setting up Salesforce to Azure Integration to send any data from Salesforce to Azure. This article may provide you some brief overview of Salesforce capabilities & features.
 
-> Pre-requisites
-> Valid Salesforce lighting (Portal) access.
+## Pre-requisites
+> A valid Salesforce lighting (Portal) access.
+> 
 > Azure Portal access.
 
 # 1. Initiating Connectivity from Salesforce to Azure
