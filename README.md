@@ -6,7 +6,7 @@
 
 > In recent times Integrating your CRM tools has become a must in workspace one of the recent common tool is Salesforce. It provides huge connectivity for end customers, partners and other organizations. 
 
-> In this article will guide your through the process of setting up Salesforce to Azure Integration to send any data from Salesforce to Azure. This article may provide you some brief overview of Salesforce capabilities & features.
+> In this article will guide you through the process of setting up Salesforce to Azure Integration to send any data from Salesforce to Azure. This article may provide you some brief overview of Salesforce capabilities & features.
 
 > Pre-requisites
 > Valid Salesforce lighting (Portal) access.
