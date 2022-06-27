@@ -1,0 +1,39 @@
+{
+  "version": "2.0",
+  "functionTimeout": "00:10:00",
+  "logging": {
+    "applicationInsights": {
+      "samplingExcludedTypes": "Request",
+      "samplingSettings": {
+        "isEnabled": true
+      }
+    }
+  },
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+    "AzureWebJobsDashboard": "UseDevelopmentStorage=true",
+    "FUNCTIONS_WORKER_RUNTIME": "dotnet",
+
+    "SalesForceAuthUrl": "SalesForceAuthUrlPath",
+    "SalesForceMainDocumentSelectUrl": "https://SalesForceMainDocumentSelectUrl.lightning.force.com/services/data/v53.0/sobjects/ContentDocument/{0}",
+    "SalesForceLatestPublishedVersionIdUrl": "https://SalesForceLatestPublishedVersionIdUrl.my.salesforce.com/services/data/v53.0/sobjects/ContentVersion/{0}/VersionData",
+
+
+//Incase if you are pushing data to Sharepoint via Azure//
+    "SharepointAuthURL": "https://accounts.accesscontrol.windows.net/TenantID/tokens/OAuth/2",
+    "SharepointclientId": "SharepointclientId@TenantID",
+    "SharepointclientSecret": "SharepointclientSecretKey",
+    "SharePointResource": "00000003-0000-0000-0000-000000000000/SharePointResourceURL@TenantID",
+    "SharepointURL": "https://SharepointURLReferencePath/sites/PrademoFolder/",
+    "SharepointSharedFolder": "Shared%20Documents/PrademoFolder/",
+
+
+//Incase if you are pushing data to AzureStorage and dropping files from Salesforce to Azure Storage directly //
+    "AzureStorageAccountName": "AzureStorageAccountName",
+    "AzureStorageAccountKey": "AzureStorageAccountKeyDetails",
+    "AzureStorageAccountBlobContainer": "AzureStorageAccountBlobContainerName"
+ 
+
+  }
+}

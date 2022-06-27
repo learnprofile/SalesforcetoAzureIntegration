@@ -1,0 +1,86 @@
+public class SEEL_SFAzureContract {
+    
+    	public static String Azure_storageName = 'AzureStorageAccountName';	//it will be the storage name in the portal. Storage name will be something like this
+        public static String Azure_Container = 'AzureStorageContainer';	//it will be directory name where you need to upload the files
+        public static String Azure_URL = '.blob.core.windows.net/';	//it will be URL of the azure
+        public static String Azure_StorageKey = 'AzureStorageAccountKey';	//storage key will look like this, every storage will have different storage key
+        public static String strGMTDate = DateTime.now().formatGMT('EEE, dd MMM yyyy HH:mm:ss z');
+		public static String conDocBody;
+    	public static Blob bodyAsBlob;
+    
+    public static void uploadFileAzure(){
+        
+        ContentVersion doc = [select VersionData,Title,FileExtension from ContentVersion where Id='Specific-ContentVersionID-hastobePassed'];
+        String fileName = EncodingUtil.urlEncode((doc.Title+ '.'+ doc.FileExtension), 'UTF-8');
+        bodyAsBlob = doc.VersionData;
+        Integer fileLength1 = doc.VersionData.size();
+        String fileLength = String.valueof(fileLength1);
+        String fileType = 'application/pdf';
+        String authHeader=createAuthorizationHeader(fileLength,fileType,fileName);
+        String strEndpoint = 'https://' + Azure_storageName	+ Azure_URL + Azure_Container + '/' + fileName;
+        
+        HTTPResponse res = sendRequest(authHeader,fileLength,fileType,strEndpoint,'Document');
+        System.debug(res.getBody());
+    }
+    
+    public static void sendContentDocument(){
+        
+        ContentDocument conDoc=[Select Id,LatestPublishedVersionId,CreatedDate,LatestPublishedVersion.Title,FileExtension,FileType
+                                from ContentDocument where Id='Content-DocumentID-hastobePassed'];
+        BlobRequest jsonBody= new BlobRequest();
+        jsonBody.LatestPublishedVersionId=conDoc.LatestPublishedVersionId;
+        jsonBody.ContentDocumentId=conDoc.Id;
+        String fileLength = String.valueOf(JSON.serialize(jsonBody).length());
+        String fileType = 'text/xml; charset=utf-8';
+        String fileName = EncodingUtil.urlEncode(conDoc.LatestPublishedVersion.Title+ '.txt' , 'UTF-8');
+        String authHeader=createAuthorizationHeader(fileLength,fileType,fileName);
+        String strEndpoint = 'https://' + Azure_storageName	+ Azure_URL + Azure_Container + '/' + fileName;
+           
+        conDocBody=JSON.serialize(jsonBody);
+        HTTPResponse res = sendRequest(authHeader,fileLength,fileType,strEndpoint,'ContentDocument');
+        System.debug(res.getBody());
+    }
+    
+    private static String createAuthorizationHeader(String fileLength,String fileType,String fileName){
+        
+        String canonicalHeader = 'x-ms-blob-type:BlockBlob\nx-ms-date:'+strGMTDate+'\nx-ms-version:2020-08-04\n';
+        String canonRes = '/' + Azure_storageName + '/' + Azure_Container + '/' + fileName;
+        String stringToSign = 'PUT\n\n\n'+fileLength +'\n\n'+fileType+'\n\n\n\n\n\n\n'+canonicalHeader+canonRes;
+        String accountSharedKey = Azure_StorageKey; // replace with your accounts shared key
+        Blob decodedAccountSharedKey = EncodingUtil.base64Decode(accountSharedKey);
+        String authToken = EncodingUtil.base64Encode(crypto.generateMac('HmacSHA256',Blob.valueOf(stringToSign), decodedAccountSharedKey));
+        String authHeader = 'SharedKey ' + Azure_storageName + ':' + authToken;
+           
+        return authHeader;
+         
+    }
+    
+    private Static HttpResponse sendRequest(String authHeader,String fileLength,String fileType,String strEndpoint,String RequestType){
+        
+        HttpRequest req = new HttpRequest();
+        req.setMethod('PUT');
+        req.setHeader('x-ms-blob-type', 'BlockBlob');
+        req.setHeader('x-ms-date', strGMTDate);
+        req.setHeader('Authorization', authHeader);
+        req.setHeader('x-ms-version', '2020-08-04');
+        req.setHeader('Content-Length', fileLength);
+        req.setHeader('Content-Type', fileType);
+        req.setEndpoint(strEndpoint);
+        
+        if(RequestType=='ContentDocument')
+        	req.setBody(conDocBody);
+        else if(RequestType=='Document')
+            req.setBodyAsBlob(bodyAsBlob);
+        
+        Http http = new Http();
+        HTTPResponse res = http.send(req);
+        
+        return res;
+    }
+    
+    public class BlobRequest{
+        
+        public String LatestPublishedVersionId;
+        public String ContentDocumentId;
+    }
+}
